@@ -20,6 +20,16 @@ export function SearchIcon(props: IconProps) {
   );
 }
 
+export function ShareIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke} {...props}>
+      <path d="M12 3.5 V14" />
+      <path d="M7.5 6.5 L12 2.5 L16.5 6.5" />
+      <path d="M5.5 11.5 V19 a1.5 1.5 0 0 0 1.5 1.5 H17 A1.5 1.5 0 0 0 18.5 19 V11.5" />
+    </svg>
+  );
+}
+
 export function CloseIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke} {...props}>

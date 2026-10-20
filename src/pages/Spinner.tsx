@@ -102,7 +102,7 @@ export function Spinner() {
           aria-label="Add an option"
           maxLength={24}
           disabled={animate}
-          className="h-12 w-full rounded-2xl border border-line bg-card px-4 text-[15px] outline-none placeholder:text-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:opacity-40"
+          className="h-12 w-full rounded-2xl border border-line bg-card px-4 text-base outline-none placeholder:text-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:opacity-40"
         />
         <button
           type="submit"

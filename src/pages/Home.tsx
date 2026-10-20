@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { InstallHint } from "../components/InstallHint";
 import { Logo } from "../components/Logo";
 import { SearchIcon, CloseIcon, ToolIcon } from "../components/Icons";
 import { Screen } from "../components/ui";
@@ -47,7 +48,7 @@ export function Home() {
           autoCapitalize="off"
           autoCorrect="off"
           spellCheck={false}
-          className="h-full w-full bg-transparent text-[15px] text-ink outline-none placeholder:text-muted"
+          className="h-full w-full bg-transparent text-base text-ink outline-none placeholder:text-muted"
         />
         {query ? (
           <button
@@ -86,6 +87,8 @@ export function Home() {
           ))}
         </ul>
       )}
+
+      <InstallHint />
 
       <p className="mt-6 text-center text-[13px] text-muted">
         {visible.length} {visible.length === 1 ? "tool" : "tools"} · One simple workspace
