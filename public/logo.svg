@@ -5,7 +5,7 @@
     .wrench-stroke { fill: none; stroke: #111111; }
     @media (prefers-color-scheme: dark) {
       .bg { fill: #000000; }
-      .wrench-stroke { stroke: #ffffff; stroke-width: 2.7; }
+      .wrench-stroke { stroke: #ffffff; stroke-width: 2.2; }
     }
   </style>
   <rect class="bg" width="88" height="88" rx="22"/>
