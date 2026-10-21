@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ToolScreen } from "../components/ToolScreen";
 import { PrimaryButton } from "../components/ui";
 import { getTool } from "../data/tools";
+import { QuarterHeads } from "../components/QuarterHeads";
 import { useTheme } from "../lib/theme";
 
 const tool = getTool("flip-a-coin");
@@ -14,29 +15,11 @@ function CoinFace({ side }: { side: "heads" | "tails" }) {
     <svg viewBox="0 0 200 200" className="h-full w-full">
       <circle cx="100" cy="100" r="94" style={{ fill: "var(--elevated)" }} />
       <circle cx="100" cy="100" r="86" style={{ fill: "var(--card)" }} stroke={ink} strokeWidth="3" />
-      <circle cx="100" cy="100" r="74" fill="none" style={{ stroke: "var(--line)" }} strokeWidth="1.5" />
       {side === "heads" ? (
-        <g transform="translate(-5 -5)">
-          <defs>
-            <path id="headsArc" d="M 38 100 A 67 67 0 0 1 172 100" fill="none" />
-          </defs>
-          <text fontFamily="Georgia, 'Times New Roman', serif" fontSize="13" letterSpacing="3" fill={ink}>
-            <textPath href="#headsArc" startOffset="50%" textAnchor="middle">
-              LIBERTY
-            </textPath>
-          </text>
-          {/* George Washington profile, facing left, quarter-style bust */}
-          <path
-            fill={ink}
-            d="M 66 158 L 148 158 C 140 148, 128 142, 120 136 C 114 131, 111 124, 112 116 L 118 128 C 119 133, 126 134, 129 129 C 131 125, 129 118, 127 110 C 125 101, 126 94, 128 87 C 131 72, 122 58, 106 53 C 90 48, 74 55, 68 68 C 65 73, 63 78, 62 83 L 52 91 C 49 94, 50 98, 55 99 L 59 100 C 57 103, 57 106, 60 108 C 58 111, 59 114, 62 116 C 60 122, 61 129, 64 134 C 67 142, 66 150, 66 158 Z"
-          />
-          <path d="M 88 64 C 97 60, 107 62, 113 68" fill="none" style={{ stroke: "var(--detail)" }} strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M 108 78 C 112 82, 113 87, 111 92" fill="none" style={{ stroke: "var(--detail)" }} strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M 92 108 C 96 105, 101 105, 105 108" fill="none" style={{ stroke: "var(--detail)" }} strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M 116 112 L 128 106 L 124 118 L 130 124 L 117 124 Z" fill={ink} />
-        </g>
+        <QuarterHeads ink={ink} detail="var(--detail)" />
       ) : (
         <g transform="translate(-5 -5)">
+          <circle cx="105" cy="105" r="74" fill="none" style={{ stroke: "var(--line)" }} strokeWidth="1.5" />
           <defs>
             <path id="tailsArc" d="M 34 108 A 71 71 0 0 1 176 108" fill="none" />
             <path id="tailsArcB" d="M 40 96 A 69 69 0 0 0 170 96" fill="none" />
