@@ -58,6 +58,14 @@ function timpaniTargets(): TuningTarget[] {
 const guitarTargets = () =>
   [40, 45, 50, 55, 59, 64].map((midi, index) => target(midi, `String ${6 - index}`));
 
+/**
+ * Wind and brass tuning note. The tuner hears concert (sounding) pitch,
+ * while the player reads a written note that may be transposed.
+ */
+function heardTarget(concertMidi: number, written: string): TuningTarget {
+  return target(concertMidi, `Written ${written}`);
+}
+
 export const instruments: Instrument[] = [
   {
     id: "violin",
@@ -125,6 +133,108 @@ export const instruments: Instrument[] = [
     name: "Piano",
     summary: "All 88 keys · A0 to C8",
     targets: pianoTargets(),
+  },
+  {
+    id: "clarinet-bb",
+    name: "Clarinet in B♭",
+    summary: "Sounds a major 2nd below written · Soprano clarinet",
+    targets: [heardTarget(65, "G4"), heardTarget(69, "B4")],
+  },
+  {
+    id: "clarinet-eb",
+    name: "Clarinet in E♭",
+    summary: "Sounds a minor 3rd above written · Sopranino clarinet",
+    targets: [heardTarget(69, "F#4"), heardTarget(75, "C5")],
+  },
+  {
+    id: "clarinet-a",
+    name: "Clarinet in A",
+    summary: "Sounds a minor 3rd below written · Orchestral clarinet",
+    targets: [heardTarget(64, "G4"), heardTarget(69, "C#5")],
+  },
+  {
+    id: "bass-clarinet",
+    name: "Bass Clarinet in B♭",
+    summary: "Sounds a major 9th below written",
+    targets: [heardTarget(45, "B3"), heardTarget(46, "C4")],
+  },
+  {
+    id: "alto-clarinet",
+    name: "Alto Clarinet in E♭",
+    summary: "Sounds a major 6th below written",
+    targets: [heardTarget(51, "C4"), heardTarget(57, "F4")],
+  },
+  {
+    id: "flute",
+    name: "Flute",
+    summary: "In C · Sounds as written",
+    targets: [heardTarget(69, "A4"), heardTarget(81, "A5")],
+  },
+  {
+    id: "piccolo",
+    name: "Piccolo",
+    summary: "In C · Sounds an octave above written",
+    targets: [heardTarget(81, "A4")],
+  },
+  {
+    id: "saxophone-soprano",
+    name: "Soprano Saxophone in B♭",
+    summary: "Sounds a major 2nd below written",
+    targets: [heardTarget(65, "G4"), heardTarget(69, "B4")],
+  },
+  {
+    id: "saxophone-alto",
+    name: "Alto Saxophone in E♭",
+    summary: "Sounds a major 6th below written",
+    targets: [heardTarget(57, "F#4"), heardTarget(58, "G4")],
+  },
+  {
+    id: "saxophone-tenor",
+    name: "Tenor Saxophone in B♭",
+    summary: "Sounds a major 9th below written",
+    targets: [heardTarget(45, "B3"), heardTarget(46, "C4")],
+  },
+  {
+    id: "saxophone-baritone",
+    name: "Baritone Saxophone in E♭",
+    summary: "Sounds an octave plus a major 6th below written",
+    targets: [heardTarget(45, "F#4"), heardTarget(51, "C5")],
+  },
+  {
+    id: "oboe",
+    name: "Oboe",
+    summary: "In C · Sounds as written · Gives the orchestral A",
+    targets: [heardTarget(69, "A4")],
+  },
+  {
+    id: "bassoon",
+    name: "Bassoon",
+    summary: "In C · Sounds as written",
+    targets: [heardTarget(57, "A3"), heardTarget(58, "B♭3")],
+  },
+  {
+    id: "trumpet",
+    name: "Trumpet in B♭",
+    summary: "Sounds a major 2nd below written",
+    targets: [heardTarget(69, "B4"), heardTarget(70, "C5")],
+  },
+  {
+    id: "trombone",
+    name: "Trombone",
+    summary: "In B♭ · Reads concert pitch, sounds as written",
+    targets: [heardTarget(46, "B♭2"), heardTarget(53, "F3"), heardTarget(58, "B♭3")],
+  },
+  {
+    id: "french-horn",
+    name: "French Horn in F",
+    summary: "Sounds a perfect 5th below written",
+    targets: [heardTarget(53, "C4"), heardTarget(57, "E4"), heardTarget(65, "C5")],
+  },
+  {
+    id: "tuba",
+    name: "Tuba",
+    summary: "Reads concert pitch, sounds as written",
+    targets: [heardTarget(34, "B♭1"), heardTarget(41, "F2"), heardTarget(46, "B♭2")],
   },
 ];
 

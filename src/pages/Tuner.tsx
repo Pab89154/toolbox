@@ -188,7 +188,7 @@ export function Tuner() {
       </div>
 
       <div className="mt-6">
-        <FieldLabel>{instrument.id === "piano" || instrument.id === "harp" || instrument.id === "timpani" ? "Note to tune" : "String to tune"}</FieldLabel>
+        <FieldLabel>{instrument.targets[0]?.detail.startsWith("String") ? "String to tune" : "Note to tune"}</FieldLabel>
         {instrument.targets.length <= 8 ? (
           <div className="flex flex-wrap gap-2">
             <ChoiceChip type="button" selected={targetIndex === null} onClick={() => setTargetIndex(null)}>
@@ -202,7 +202,9 @@ export function Tuner() {
                 onClick={() => setTargetIndex(index)}
                 title={target.detail}
               >
-                {target.detail.replace("String ", "S")} · {target.label}
+                {target.detail.startsWith("String ")
+                  ? `${target.detail.replace("String ", "S")} · ${target.label}`
+                  : target.label}
               </ChoiceChip>
             ))}
           </div>
