@@ -56,8 +56,21 @@ export function detectPitch(buf: Float32Array, sampleRate: number): number {
   if (!Number.isFinite(period) || period <= 0) return -1;
 
   const frequency = sampleRate / period;
-  if (frequency < 40 || frequency > 2000) return -1;
+  if (frequency < 25 || frequency > 4500) return -1;
   return frequency;
+}
+
+export function frequencyFromMidi(midi: number): number {
+  return 440 * Math.pow(2, (midi - 69) / 12);
+}
+
+export function noteLabel(midi: number): string {
+  const safe = Math.max(0, Math.min(127, Math.round(midi)));
+  return `${NOTE_NAMES[safe % 12]}${Math.floor(safe / 12) - 1}`;
+}
+
+export function centsBetween(frequency: number, targetFrequency: number): number {
+  return Math.round(1200 * Math.log2(frequency / targetFrequency));
 }
 
 export function describePitch(frequency: number) {
