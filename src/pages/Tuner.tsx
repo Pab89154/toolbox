@@ -14,6 +14,7 @@ export function Tuner() {
   const [instrumentId, setInstrumentId] = useState("violin");
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
   const [note, setNote] = useState("—");
+  const [concertNote, setConcertNote] = useState("—");
   const [cents, setCents] = useState(0);
   const [frequency, setFrequency] = useState<number | null>(null);
   const [heard, setHeard] = useState(false);
@@ -23,11 +24,14 @@ export function Tuner() {
   const frameRef = useRef(0);
   const smoothRef = useRef<number | null>(null);
   const targetRef = useRef<TuningTarget | null>(null);
+  const transposeRef = useRef(0);
   const toneRef = useRef<{ ctx: AudioContext; osc: OscillatorNode; gain: GainNode } | null>(null);
 
   const instrument = getInstrument(instrumentId);
   const selectedTarget = targetIndex === null ? null : (instrument.targets[targetIndex] ?? null);
   targetRef.current = selectedTarget;
+  transposeRef.current = instrument.transpose ?? 0;
+  const transposing = (instrument.transpose ?? 0) !== 0;
 
   function stopTone() {
     if (!toneRef.current) return;
@@ -56,6 +60,7 @@ export function Tuner() {
     setCents(0);
     setFrequency(null);
     setNote("—");
+    setConcertNote("—");
     setStatus("idle");
   }
 
@@ -127,9 +132,12 @@ export function Tuner() {
           if (detected > 0) {
             smoothRef.current =
               smoothRef.current == null ? detected : smoothRef.current * 0.65 + detected * 0.35;
-            const described = describePitch(smoothRef.current);
+            const shift = transposeRef.current;
+            const described = describePitch(smoothRef.current, shift);
+            const concert = describePitch(smoothRef.current, 0);
             const target = targetRef.current;
             setNote(`${described.name}${described.octave}`);
+            setConcertNote(`${concert.name}${concert.octave}`);
             setCents(target ? centsBetween(smoothRef.current, target.frequency) : described.cents);
             setFrequency(smoothRef.current);
             setHeard(true);
@@ -137,6 +145,7 @@ export function Tuner() {
             smoothRef.current = null;
             setHeard(false);
             setNote("—");
+            setConcertNote("—");
             setCents(0);
             setFrequency(null);
           }
@@ -155,7 +164,9 @@ export function Tuner() {
     ? status === "listening"
       ? "Listening"
       : selectedTarget
-        ? `Target ${selectedTarget.label} · ${selectedTarget.frequency.toFixed(1)} Hz`
+        ? selectedTarget.writtenLabel
+          ? `${selectedTarget.detail} · ${selectedTarget.frequency.toFixed(1)} Hz`
+          : `Target ${selectedTarget.label} · ${selectedTarget.frequency.toFixed(1)} Hz`
         : "Any note · A440"
     : inTune
       ? "In tune"
@@ -202,9 +213,10 @@ export function Tuner() {
                 onClick={() => setTargetIndex(index)}
                 title={target.detail}
               >
-                {target.detail.startsWith("String ")
-                  ? `${target.detail.replace("String ", "S")} · ${target.label}`
-                  : target.label}
+                {target.writtenLabel ??
+                  (target.detail.startsWith("String ")
+                    ? `${target.detail.replace("String ", "S")} · ${target.label}`
+                    : target.label)}
               </ChoiceChip>
             ))}
           </div>
@@ -258,6 +270,9 @@ export function Tuner() {
             ? `${frequency.toFixed(1)} Hz · ${cents > 0 ? "+" : ""}${cents} cents`
             : guidance}
         </p>
+        {heard && transposing ? (
+          <p className="mt-1 text-center text-[13px] tabular-nums text-muted">Sounds {concertNote}</p>
+        ) : null}
         {heard ? (
           <p className="mt-1 text-center text-sm font-medium" style={{ color: inTune ? tool.accent : "#FAFAFA" }}>
             {guidance}
@@ -282,7 +297,11 @@ export function Tuner() {
             onClick={playReference}
             className="flex h-12 w-full items-center justify-center rounded-2xl bg-elevated text-[15px] font-medium text-ink transition active:scale-[0.98]"
           >
-            {playing ? "Stop reference" : `Play ${selectedTarget.label} reference`}
+            {playing
+              ? "Stop reference"
+              : selectedTarget.writtenLabel
+                ? `Play reference · sounds ${selectedTarget.label}`
+                : `Play ${selectedTarget.label} reference`}
           </button>
         ) : null}
       </div>

@@ -1,7 +1,10 @@
 import { frequencyFromMidi, noteLabel } from "../lib/pitch";
 
 export type TuningTarget = {
+  /** Concert (sounding) note name, as the tuner hears it. */
   label: string;
+  /** Written note name for transposing instruments, if different. */
+  writtenLabel?: string;
   detail: string;
   frequency: number;
 };
@@ -10,6 +13,8 @@ export type Instrument = {
   id: string;
   name: string;
   summary: string;
+  /** Semitones from concert pitch to the player's written pitch. */
+  transpose?: number;
   targets: TuningTarget[];
 };
 
@@ -63,7 +68,8 @@ const guitarTargets = () =>
  * while the player reads a written note that may be transposed.
  */
 function heardTarget(concertMidi: number, written: string): TuningTarget {
-  return target(concertMidi, `Written ${written}`);
+  const base = target(concertMidi, `Written ${written} · sounds ${noteLabel(concertMidi)}`);
+  return { ...base, writtenLabel: written };
 }
 
 export const instruments: Instrument[] = [
@@ -138,30 +144,35 @@ export const instruments: Instrument[] = [
     id: "clarinet-bb",
     name: "Clarinet in B♭",
     summary: "Sounds a major 2nd below written · Soprano clarinet",
+    transpose: 2,
     targets: [heardTarget(65, "G4"), heardTarget(69, "B4")],
   },
   {
     id: "clarinet-eb",
     name: "Clarinet in E♭",
     summary: "Sounds a minor 3rd above written · Sopranino clarinet",
+    transpose: -3,
     targets: [heardTarget(69, "F#4"), heardTarget(75, "C5")],
   },
   {
     id: "clarinet-a",
     name: "Clarinet in A",
     summary: "Sounds a minor 3rd below written · Orchestral clarinet",
+    transpose: 3,
     targets: [heardTarget(64, "G4"), heardTarget(69, "C#5")],
   },
   {
     id: "bass-clarinet",
     name: "Bass Clarinet in B♭",
     summary: "Sounds a major 9th below written",
+    transpose: 14,
     targets: [heardTarget(45, "B3"), heardTarget(46, "C4")],
   },
   {
     id: "alto-clarinet",
     name: "Alto Clarinet in E♭",
     summary: "Sounds a major 6th below written",
+    transpose: 9,
     targets: [heardTarget(51, "C4"), heardTarget(57, "F4")],
   },
   {
@@ -174,30 +185,35 @@ export const instruments: Instrument[] = [
     id: "piccolo",
     name: "Piccolo",
     summary: "In C · Sounds an octave above written",
+    transpose: -12,
     targets: [heardTarget(81, "A4")],
   },
   {
     id: "saxophone-soprano",
     name: "Soprano Saxophone in B♭",
     summary: "Sounds a major 2nd below written",
+    transpose: 2,
     targets: [heardTarget(65, "G4"), heardTarget(69, "B4")],
   },
   {
     id: "saxophone-alto",
     name: "Alto Saxophone in E♭",
     summary: "Sounds a major 6th below written",
+    transpose: 9,
     targets: [heardTarget(57, "F#4"), heardTarget(58, "G4")],
   },
   {
     id: "saxophone-tenor",
     name: "Tenor Saxophone in B♭",
     summary: "Sounds a major 9th below written",
+    transpose: 14,
     targets: [heardTarget(45, "B3"), heardTarget(46, "C4")],
   },
   {
     id: "saxophone-baritone",
     name: "Baritone Saxophone in E♭",
     summary: "Sounds an octave plus a major 6th below written",
+    transpose: 21,
     targets: [heardTarget(45, "F#4"), heardTarget(51, "C5")],
   },
   {
@@ -216,6 +232,7 @@ export const instruments: Instrument[] = [
     id: "trumpet",
     name: "Trumpet in B♭",
     summary: "Sounds a major 2nd below written",
+    transpose: 2,
     targets: [heardTarget(69, "B4"), heardTarget(70, "C5")],
   },
   {
@@ -228,6 +245,7 @@ export const instruments: Instrument[] = [
     id: "french-horn",
     name: "French Horn in F",
     summary: "Sounds a perfect 5th below written",
+    transpose: 7,
     targets: [heardTarget(53, "C4"), heardTarget(57, "E4"), heardTarget(65, "C5")],
   },
   {

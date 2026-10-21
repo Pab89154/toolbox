@@ -73,9 +73,9 @@ export function centsBetween(frequency: number, targetFrequency: number): number
   return Math.round(1200 * Math.log2(frequency / targetFrequency));
 }
 
-export function describePitch(frequency: number) {
-  const midi = Math.round(12 * Math.log2(frequency / 440) + 69);
-  const exact = 12 * Math.log2(frequency / 440) + 69;
+export function describePitch(frequency: number, transposeSemitones = 0) {
+  const midi = Math.round(12 * Math.log2(frequency / 440) + 69 + transposeSemitones);
+  const exact = 12 * Math.log2(frequency / 440) + 69 + transposeSemitones;
   const cents = Math.max(-50, Math.min(50, Math.round((exact - midi) * 100)));
   const safe = Math.max(0, Math.min(127, midi));
   return {
