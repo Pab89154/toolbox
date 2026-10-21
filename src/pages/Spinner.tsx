@@ -33,13 +33,31 @@ function segmentPath(index: number, count: number) {
   return `M 100 100 L ${x1} ${y1} A ${radius} ${radius} 0 ${large} 1 ${x2} ${y2} Z`;
 }
 
+function landedIndex(rotationValue: number, count: number) {
+  const slice = 360 / count;
+  const pointerAngle = (((360 - (rotationValue % 360)) % 360) + 360) % 360;
+  return Math.floor(pointerAngle / slice) % count;
+}
+
 export function Spinner() {
   const [options, setOptions] = useState<string[]>(loadOptions);
   const [draft, setDraft] = useState("");
   const [rotation, setRotation] = useState(0);
   const [animate, setAnimate] = useState(false);
+  const [durationMs, setDurationMs] = useState(3200);
+  const [dragging, setDragging] = useState(false);
   const [result, setResult] = useState<number | null>(null);
   const timer = useRef(0);
+  const rotationRef = useRef(0);
+  const wheelRef = useRef<HTMLDivElement>(null);
+  const drag = useRef<{
+    pointerId: number;
+    lastAngle: number;
+    lastTime: number;
+    velocity: number; // degrees per ms, smoothed
+    moved: number; // total degrees dragged
+    rotation: number;
+  } | null>(null);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(options));
@@ -50,7 +68,7 @@ export function Spinner() {
   function resetSpin() {
     window.clearTimeout(timer.current);
     setAnimate(false);
-    setRotation(0);
+    applyRotation(0);
     setResult(null);
   }
 
@@ -67,23 +85,106 @@ export function Spinner() {
     setOptions((current) => current.filter((_, item) => item !== index));
   }
 
+  function applyRotation(value: number) {
+    rotationRef.current = value;
+    setRotation(value);
+  }
+
+  function finishSpin(finalRotation: number, ms: number) {
+    const index = landedIndex(finalRotation, options.length);
+    setResult(null);
+    setDurationMs(ms);
+    setAnimate(true);
+    applyRotation(finalRotation);
+    timer.current = window.setTimeout(() => {
+      setAnimate(false);
+      setResult(index);
+    }, ms);
+  }
+
   function spin() {
     if (animate || options.length < 2) return;
     const index = Math.floor(Math.random() * options.length);
     const slice = 360 / options.length;
     const desired = (360 - (index * slice + slice / 2) + 360) % 360;
+    const prev = rotationRef.current;
+    const current = ((prev % 360) + 360) % 360;
+    let delta = desired - current;
+    if (delta < 0) delta += 360;
+    finishSpin(prev + delta + 360 * 5, 3200);
+  }
+
+  function angleFromCenter(event: React.PointerEvent) {
+    const rect = wheelRef.current?.getBoundingClientRect();
+    if (!rect) return 0;
+    const x = event.clientX - (rect.left + rect.width / 2);
+    const y = event.clientY - (rect.top + rect.height / 2);
+    return (Math.atan2(y, x) * 180) / Math.PI;
+  }
+
+  function onWheelPointerDown(event: React.PointerEvent) {
+    if (animate || options.length < 2) return;
+    event.preventDefault();
+    try {
+      (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    } catch {
+      // Pointer capture is a nicety; dragging still works without it.
+    }
+    window.clearTimeout(timer.current);
+    setAnimate(false);
     setResult(null);
-    setAnimate(true);
-    setRotation((prev) => {
-      const current = ((prev % 360) + 360) % 360;
-      let delta = desired - current;
-      if (delta < 0) delta += 360;
-      return prev + delta + 360 * 5;
-    });
-    timer.current = window.setTimeout(() => {
-      setAnimate(false);
-      setResult(index);
-    }, 3200);
+    drag.current = {
+      pointerId: event.pointerId,
+      lastAngle: angleFromCenter(event),
+      lastTime: performance.now(),
+      velocity: 0,
+      moved: 0,
+      rotation: rotationRef.current,
+    };
+    setDragging(true);
+  }
+
+  function onWheelPointerMove(event: React.PointerEvent) {
+    const state = drag.current;
+    if (!state || state.pointerId !== event.pointerId) return;
+    const now = performance.now();
+    const angle = angleFromCenter(event);
+    let delta = angle - state.lastAngle;
+    delta = ((delta + 540) % 360) - 180;
+    const dt = Math.max(now - state.lastTime, 1);
+    state.velocity = state.velocity * 0.7 + (delta / dt) * 0.3;
+    state.lastAngle = angle;
+    state.lastTime = now;
+    state.moved += Math.abs(delta);
+    state.rotation += delta;
+    applyRotation(state.rotation);
+  }
+
+  function onWheelPointerUp(event: React.PointerEvent) {
+    const state = drag.current;
+    if (!state || state.pointerId !== event.pointerId) return;
+    drag.current = null;
+    setDragging(false);
+    // Finger paused before lifting — no fling.
+    const velocity = performance.now() - state.lastTime > 80 ? 0 : state.velocity;
+    if (state.moved < 8) {
+      // A tap on the wheel spins it, just like the button.
+      spin();
+      return;
+    }
+    if (Math.abs(velocity) < 0.12) {
+      spin();
+      return;
+    }
+    const clamped = Math.max(-2.4, Math.min(2.4, velocity));
+    const extra = clamped * 1400 + Math.sign(clamped) * 360;
+    const ms = Math.round(Math.max(1600, Math.min(4200, 1100 + Math.abs(extra) / 1.1)));
+    finishSpin(state.rotation + extra, ms);
+  }
+
+  function onWheelPointerCancel() {
+    drag.current = null;
+    setDragging(false);
   }
 
   return (
@@ -113,10 +214,21 @@ export function Spinner() {
         </button>
       </form>
 
-      <div className="relative mx-auto mt-8 h-72 w-72 max-w-full">
+      <div
+        ref={wheelRef}
+        className="relative mx-auto mt-8 h-72 w-72 max-w-full touch-none select-none"
+        style={{ cursor: dragging ? "grabbing" : "grab" }}
+        role="button"
+        aria-label="Spin the wheel"
+        title="Drag, flick, or tap to spin"
+        onPointerDown={onWheelPointerDown}
+        onPointerMove={onWheelPointerMove}
+        onPointerUp={onWheelPointerUp}
+        onPointerCancel={onWheelPointerCancel}
+      >
         <svg
           viewBox="0 0 24 24"
-          className="absolute top-0 left-1/2 z-10 h-7 w-7 -translate-x-1/2"
+          className="pointer-events-none absolute top-0 left-1/2 z-10 h-7 w-7 -translate-x-1/2"
           aria-hidden="true"
           style={{ color: tool.accent }}
         >
@@ -124,10 +236,10 @@ export function Spinner() {
         </svg>
         <svg
           viewBox="0 0 200 200"
-          className="h-full w-full"
+          className="pointer-events-none h-full w-full"
           style={{
             transform: `rotate(${rotation}deg)`,
-            transition: animate ? "transform 3.2s cubic-bezier(0.12, 0.7, 0.08, 1)" : "none",
+            transition: animate ? `transform ${durationMs}ms cubic-bezier(0.12, 0.7, 0.08, 1)` : "none",
           }}
         >
           {options.length <= 1 ? (
@@ -175,7 +287,7 @@ export function Spinner() {
       </div>
 
       <p className="mt-4 min-h-7 text-center text-lg font-medium" aria-live="polite" style={{ color: result === null ? "#A1A1AA" : tool.accent }}>
-        {options.length < 2 ? "Add at least two options" : result === null ? "Spin the wheel" : options[result]}
+        {options.length < 2 ? "Add at least two options" : result === null ? (animate ? "Spinning" : "Drag, flick, or tap the wheel to spin") : options[result]}
       </p>
 
       <div className="mt-4">
