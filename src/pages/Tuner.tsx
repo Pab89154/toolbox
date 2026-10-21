@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useToolAccent } from "../lib/theme";
 import { ToolScreen } from "../components/ToolScreen";
 import { ChoiceChip, FieldLabel, PrimaryButton } from "../components/ui";
 import { getTool } from "../data/tools";
@@ -10,6 +11,7 @@ const tool = getTool("tuner");
 type Status = "idle" | "listening" | "denied" | "missing";
 
 export function Tuner() {
+  const accent = useToolAccent(tool);
   const [status, setStatus] = useState<Status>("idle");
   const [instrumentId, setInstrumentId] = useState("violin");
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
@@ -244,23 +246,23 @@ export function Tuner() {
 
       <div className="mt-6 rounded-2xl border border-line bg-card px-4 py-8">
         <svg viewBox="0 0 200 120" className="mx-auto h-36 w-full max-w-sm" aria-hidden="true">
-          <path d="M 24 100 A 76 76 0 0 1 176 100" fill="none" stroke="#303036" strokeWidth="8" strokeLinecap="round" />
-          <path d="M 96 100 A 4 4 0 0 1 104 100" fill="none" stroke="#3f3f46" strokeWidth="8" strokeLinecap="round" />
+          <path d="M 24 100 A 76 76 0 0 1 176 100" fill="none" style={{ stroke: "var(--line)" }} strokeWidth="8" strokeLinecap="round" />
+          <path d="M 96 100 A 4 4 0 0 1 104 100" fill="none" style={{ stroke: "var(--line-strong)" }} strokeWidth="8" strokeLinecap="round" />
           <line
             x1="100"
             y1="100"
             x2="100"
             y2="38"
-            stroke={tool.accent}
+            stroke={accent}
             strokeWidth="3"
             strokeLinecap="round"
             transform={`rotate(${needle * 0.8} 100 100)`}
           />
-          <circle cx="100" cy="100" r="5" fill={tool.accent} />
+          <circle cx="100" cy="100" r="5" fill={accent} />
         </svg>
         <p
           className="mt-2 text-center text-6xl font-semibold tabular-nums tracking-tight"
-          style={{ color: inTune ? tool.accent : "#FAFAFA" }}
+          style={{ color: inTune ? accent : "var(--ink)" }}
           aria-live="polite"
         >
           {note}
@@ -274,7 +276,7 @@ export function Tuner() {
           <p className="mt-1 text-center text-[13px] tabular-nums text-muted">Sounds {concertNote}</p>
         ) : null}
         {heard ? (
-          <p className="mt-1 text-center text-sm font-medium" style={{ color: inTune ? tool.accent : "#FAFAFA" }}>
+          <p className="mt-1 text-center text-sm font-medium" style={{ color: inTune ? accent : "var(--ink)" }}>
             {guidance}
           </p>
         ) : null}

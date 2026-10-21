@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useToolAccent } from "../lib/theme";
 import { ToolScreen } from "../components/ToolScreen";
 import { ChoiceChip, FieldLabel, PrimaryButton } from "../components/ui";
 import { getTool } from "../data/tools";
@@ -16,18 +17,19 @@ const PIPS: Record<number, [number, number][]> = {
 };
 
 function DieFace({ sides, value }: { sides: number; value: number }) {
+  const accent = useToolAccent(tool);
   return (
     <svg viewBox="0 0 100 100" className="h-52 w-52">
-      <rect x="8" y="8" width="84" height="84" rx="18" fill="#16181B" stroke="#303036" strokeWidth="2" />
+      <rect x="8" y="8" width="84" height="84" rx="18" style={{ fill: "var(--card)", stroke: "var(--line)" }} strokeWidth="2" />
       {sides === 6 ? (
-        PIPS[value]?.map(([x, y]) => <circle key={`${x}-${y}`} cx={x} cy={y} r="6.5" fill={tool.accent} />)
+        PIPS[value]?.map(([x, y]) => <circle key={`${x}-${y}`} cx={x} cy={y} r="6.5" fill={accent} />)
       ) : (
         <text
           x="50"
           y="54"
           textAnchor="middle"
           dominantBaseline="middle"
-          fill={tool.accent}
+          fill={accent}
           fontSize="34"
           fontWeight="600"
           fontFamily="inherit"

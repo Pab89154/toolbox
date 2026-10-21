@@ -2,11 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { InstallHint } from "../components/InstallHint";
 import { Logo } from "../components/Logo";
+import { ThemeToggle } from "../components/ThemeToggle";
 import { SearchIcon, CloseIcon, ToolIcon } from "../components/Icons";
 import { Screen } from "../components/ui";
 import { tools } from "../data/tools";
+import { useTheme } from "../lib/theme";
 
 export function Home() {
+  const { theme } = useTheme();
   const [query, setQuery] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -27,6 +30,7 @@ export function Home() {
           <h1 className="text-[17px] font-semibold leading-tight">Toolbox</h1>
           <p className="text-[13px] text-muted">Everyday tools. One place.</p>
         </div>
+        <ThemeToggle />
         <button
           type="button"
           aria-label="Focus search"
@@ -73,9 +77,9 @@ export function Home() {
             <li key={tool.id}>
               <Link
                 to={tool.path}
-                className="flex min-h-[112px] flex-col justify-between rounded-2xl border border-line bg-card p-4 transition active:scale-[0.98] hover:border-[#3a3a42] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+                className="flex min-h-[112px] flex-col justify-between rounded-2xl border border-line bg-card p-4 transition active:scale-[0.98] hover:border-line-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
               >
-                <span style={{ color: tool.accent }}>
+                <span style={{ color: theme === "dark" ? tool.accent : tool.accentLight }}>
                   <ToolIcon id={tool.id} className="h-6 w-6" />
                 </span>
                 <span>

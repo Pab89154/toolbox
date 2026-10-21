@@ -99,7 +99,7 @@ export function ColorPicker() {
           {Array.from({ length: 72 }, (_, index) => (
             <path key={index} d={ringPath(index)} fill={`hsl(${index * 5} 100% 50%)`} />
           ))}
-          <circle cx="100" cy="100" r="58" fill="#030308" />
+          <circle cx="100" cy="100" r="58" style={{ fill: "var(--bg)" }} />
           <circle
             cx={100 + Math.cos(marker) * 82}
             cy={100 + Math.sin(marker) * 82}

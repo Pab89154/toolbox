@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useToolAccent } from "../lib/theme";
 import { ToolScreen } from "../components/ToolScreen";
 import { PrimaryButton } from "../components/ui";
 import { getTool } from "../data/tools";
@@ -28,6 +29,7 @@ function scaleFor(kind: Kind, t: number) {
 }
 
 export function Meditate() {
+  const accent = useToolAccent(tool);
   const [running, setRunning] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [done, setDone] = useState(false);
@@ -78,8 +80,8 @@ export function Meditate() {
           <div
             className="absolute h-56 w-56 rounded-full border"
             style={{
-              borderColor: tool.accent,
-              background: `${tool.accent}14`,
+              borderColor: accent,
+              background: `${accent}14`,
               transform: `scale(${scale})`,
             }}
           />

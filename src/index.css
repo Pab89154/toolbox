@@ -1,13 +1,39 @@
 @import "tailwindcss";
 
-@theme {
-  --color-bg: #030308;
-  --color-card: #16181b;
-  --color-elevated: #27272a;
-  --color-line: #303036;
-  --color-ink: #fafafa;
-  --color-muted: #a1a1aa;
+@theme inline {
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-elevated: var(--elevated);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
   --font-sans: "SF Pro Text", "SF Pro Display", Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #030308;
+  --card: #16181b;
+  --elevated: #27272a;
+  --line: #303036;
+  --line-strong: #3a3a42;
+  --ink: #fafafa;
+  --muted: #a1a1aa;
+  /* Carved detail lines on the coin faces (dark on the silver in both themes) */
+  --detail: #16181b;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f4f4f5;
+  --card: #ffffff;
+  --elevated: #e4e4e7;
+  --line: #d9d9de;
+  --line-strong: #b9b9c1;
+  --ink: #18181b;
+  --muted: #5b5b64;
+  --detail: #ffffff;
 }
 
 html {
@@ -23,13 +49,14 @@ body,
 
 body {
   margin: 0;
-  background: #030308;
-  color: #fafafa;
+  background: var(--bg);
+  color: var(--ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
   overflow-x: hidden;
   overscroll-behavior-y: none;
+  transition: background-color 220ms ease, color 220ms ease;
 }
 
 button,
@@ -43,8 +70,8 @@ a {
 }
 
 ::selection {
-  background: #303036;
-  color: #fafafa;
+  background: var(--line);
+  color: var(--ink);
 }
 
 .page-in {
@@ -74,7 +101,7 @@ a {
 .tempo::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 999px;
-  background: linear-gradient(to right, #a3a3a3 var(--pct), #303036 var(--pct));
+  background: linear-gradient(to right, var(--muted) var(--pct), var(--line) var(--pct));
 }
 
 .tempo::-webkit-slider-thumb {
@@ -85,20 +112,21 @@ a {
   margin-top: -9px;
   border: none;
   border-radius: 999px;
-  background: #fafafa;
+  background: var(--ink);
+  box-shadow: 0 0 0 1px var(--line);
 }
 
 .tempo::-moz-range-track {
   height: 4px;
   border: none;
   border-radius: 999px;
-  background: #303036;
+  background: var(--line);
 }
 
 .tempo::-moz-range-progress {
   height: 4px;
   border-radius: 999px;
-  background: #a3a3a3;
+  background: var(--muted);
 }
 
 .tempo::-moz-range-thumb {
@@ -106,7 +134,7 @@ a {
   height: 22px;
   border: none;
   border-radius: 999px;
-  background: #fafafa;
+  background: var(--ink);
 }
 
 @keyframes tumble {

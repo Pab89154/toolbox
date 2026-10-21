@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useToolAccent } from "../lib/theme";
 import { ToolScreen } from "../components/ToolScreen";
 import { getTool } from "../data/tools";
 import {
@@ -34,6 +35,7 @@ function reduce(state: CalcState, key: string): CalcState {
 }
 
 export function Calculator() {
+  const accent = useToolAccent(tool);
   const [state, setState] = useState<CalcState>(initialCalc);
 
   useEffect(() => {
@@ -79,7 +81,7 @@ export function Calculator() {
               className={`h-16 rounded-2xl text-xl font-medium transition active:scale-[0.98] ${
                 key === "0" ? "col-span-2" : ""
               } ${equalsKey ? "bg-ink text-bg" : "bg-elevated text-ink"}`}
-              style={operator ? { color: tool.accent } : undefined}
+              style={operator ? { color: accent } : undefined}
             >
               {key}
             </button>

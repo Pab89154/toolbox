@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useToolAccent } from "../lib/theme";
 import { ToolScreen } from "../components/ToolScreen";
 import { ChoiceChip, FieldLabel, PrimaryButton } from "../components/ui";
 import { getTool } from "../data/tools";
@@ -21,6 +22,7 @@ function playClick(ctx: AudioContext, time: number, accent: boolean) {
 }
 
 export function Metronome() {
+  const accent = useToolAccent(tool);
   const [bpm, setBpm] = useState(100);
   const [beatsPerBar, setBeatsPerBar] = useState(4);
   const [playing, setPlaying] = useState(false);
@@ -95,9 +97,9 @@ export function Metronome() {
                 key={index}
                 className="h-3.5 w-3.5 rounded-full transition duration-75"
                 style={{
-                  background: active ? tool.accent : "#27272A",
+                  background: active ? accent : "var(--elevated)",
                   transform: active ? "scale(1.45)" : "scale(1)",
-                  boxShadow: active ? `0 0 0 7px ${tool.accent}33` : "none",
+                  boxShadow: active ? `0 0 0 7px ${accent}33` : "none",
                 }}
               />
             );

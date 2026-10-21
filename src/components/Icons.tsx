@@ -39,6 +39,30 @@ export function CloseIcon(props: IconProps) {
   );
 }
 
+export function SunIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke} {...props}>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2.5 V4.5" />
+      <path d="M12 19.5 V21.5" />
+      <path d="M2.5 12 H4.5" />
+      <path d="M19.5 12 H21.5" />
+      <path d="M5 5 L6.4 6.4" />
+      <path d="M17.6 17.6 L19 19" />
+      <path d="M19 5 L17.6 6.4" />
+      <path d="M6.4 17.6 L5 19" />
+    </svg>
+  );
+}
+
+export function MoonIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke} {...props}>
+      <path d="M20 14.5 A8.5 8.5 0 1 1 9.5 4 a7 7 0 0 0 10.5 10.5 Z" />
+    </svg>
+  );
+}
+
 export function BackIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke} {...props}>

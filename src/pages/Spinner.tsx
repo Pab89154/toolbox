@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useToolAccent } from "../lib/theme";
 import { CloseIcon } from "../components/Icons";
 import { ToolScreen } from "../components/ToolScreen";
 import { PrimaryButton } from "../components/ui";
@@ -40,6 +41,7 @@ function landedIndex(rotationValue: number, count: number) {
 }
 
 export function Spinner() {
+  const accent = useToolAccent(tool);
   const [options, setOptions] = useState<string[]>(loadOptions);
   const [draft, setDraft] = useState("");
   const [rotation, setRotation] = useState(0);
@@ -230,7 +232,7 @@ export function Spinner() {
           viewBox="0 0 24 24"
           className="pointer-events-none absolute top-0 left-1/2 z-10 h-7 w-7 -translate-x-1/2"
           aria-hidden="true"
-          style={{ color: tool.accent }}
+          style={{ color: accent }}
         >
           <path d="M12 22 L5 6 H19 Z" fill="currentColor" />
         </svg>
@@ -244,9 +246,9 @@ export function Spinner() {
         >
           {options.length <= 1 ? (
             <>
-              <circle cx="100" cy="100" r="92" fill="#16181B" stroke="#303036" />
+              <circle cx="100" cy="100" r="92" style={{ fill: "var(--card)", stroke: "var(--line)" }} />
               {options[0] ? (
-                <text x="100" y="100" fill="#FAFAFA" fontSize="14" textAnchor="middle" dominantBaseline="middle" fontFamily="Inter, sans-serif">
+                <text x="100" y="100" style={{ fill: "var(--ink)" }} fontSize="14" textAnchor="middle" dominantBaseline="middle" fontFamily="Inter, sans-serif">
                   {options[0]}
                 </text>
               ) : null}
@@ -263,14 +265,16 @@ export function Spinner() {
               <g key={`${label}-${index}`}>
                 <path
                   d={segmentPath(index, options.length)}
-                  fill={index % 2 === 0 ? "#16181B" : "#27272A"}
-                  stroke={landed ? tool.accent : "#303036"}
+                  style={{
+                    fill: index % 2 === 0 ? "var(--card)" : "var(--elevated)",
+                    stroke: landed ? accent : "var(--line)",
+                  }}
                   strokeWidth={landed ? 2 : 1}
                 />
                 <text
                   x={x}
                   y={y}
-                  fill="#FAFAFA"
+                  style={{ fill: "var(--ink)" }}
                   fontSize={options.length > 8 ? 8 : 11}
                   textAnchor="middle"
                   dominantBaseline="middle"
@@ -282,11 +286,11 @@ export function Spinner() {
               </g>
             );
           })}
-          <circle cx="100" cy="100" r="8" fill="#030308" stroke={tool.accent} strokeWidth="2" />
+          <circle cx="100" cy="100" r="8" style={{ fill: "var(--bg)" }} stroke={accent} strokeWidth="2" />
         </svg>
       </div>
 
-      <p className="mt-4 min-h-7 text-center text-lg font-medium" aria-live="polite" style={{ color: result === null ? "#A1A1AA" : tool.accent }}>
+      <p className="mt-4 min-h-7 text-center text-lg font-medium" aria-live="polite" style={{ color: result === null ? "var(--muted)" : accent }}>
         {options.length < 2 ? "Add at least two options" : result === null ? (animate ? "Spinning" : "Drag, flick, or tap the wheel to spin") : options[result]}
       </p>
 
@@ -301,7 +305,7 @@ export function Spinner() {
           <li
             key={`${label}-${index}`}
             className="flex items-center justify-between rounded-2xl border bg-card px-4 py-3"
-            style={{ borderColor: result === index && !animate ? tool.accent : "#303036" }}
+            style={{ borderColor: result === index && !animate ? accent : "var(--line)" }}
           >
             <span className="pr-3 text-sm">{label}</span>
             <button
