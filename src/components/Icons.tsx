@@ -63,6 +63,23 @@ export function MoonIcon(props: IconProps) {
   );
 }
 
+export function ChevronIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke} {...props}>
+      <path d="M8 9.5 L12 5.5 L16 9.5" />
+      <path d="M8 14.5 L12 18.5 L16 14.5" />
+    </svg>
+  );
+}
+
+export function CheckIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke} {...props}>
+      <path d="M5 12.5 L10 17.5 L19 7" />
+    </svg>
+  );
+}
+
 export function BackIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke} {...props}>

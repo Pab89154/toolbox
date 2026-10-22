@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useToolAccent } from "../lib/theme";
 import { ToolScreen } from "../components/ToolScreen";
+import { Dropdown } from "../components/Dropdown";
 import { ChoiceChip, FieldLabel, PrimaryButton } from "../components/ui";
 import { getTool } from "../data/tools";
 import { getInstrument, instruments, type TuningTarget } from "../data/instruments";
@@ -181,22 +182,16 @@ export function Tuner() {
     <ToolScreen tool={tool}>
       <div>
         <FieldLabel>Instrument</FieldLabel>
-        <select
+        <Dropdown
           value={instrumentId}
-          onChange={(event) => {
+          options={instruments.map((item) => ({ value: item.id, label: item.name }))}
+          onChange={(next) => {
             stopTone();
-            setInstrumentId(event.target.value);
+            setInstrumentId(next);
             setTargetIndex(null);
           }}
-          aria-label="Instrument"
-          className="h-12 w-full appearance-none rounded-2xl border border-line bg-card px-4 text-base text-ink outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
-        >
-          {instruments.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name}
-            </option>
-          ))}
-        </select>
+          ariaLabel="Instrument"
+        />
         <p className="mt-2 text-[13px] text-muted">{instrument.summary}</p>
       </div>
 
@@ -223,19 +218,18 @@ export function Tuner() {
             ))}
           </div>
         ) : (
-          <select
+          <Dropdown
             value={targetIndex === null ? "auto" : String(targetIndex)}
-            onChange={(event) => setTargetIndex(event.target.value === "auto" ? null : Number(event.target.value))}
-            aria-label="Note to tune"
-            className="h-12 w-full appearance-none rounded-2xl border border-line bg-card px-4 text-base text-ink outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
-          >
-            <option value="auto">Auto — nearest note</option>
-            {instrument.targets.map((target, index) => (
-              <option key={`${target.label}-${target.detail}-${index}`} value={index}>
-                {target.label} · {target.frequency.toFixed(1)} Hz
-              </option>
-            ))}
-          </select>
+            options={[
+              { value: "auto", label: "Auto — nearest note" },
+              ...instrument.targets.map((target, index) => ({
+                value: String(index),
+                label: `${target.label} · ${target.frequency.toFixed(1)} Hz`,
+              })),
+            ]}
+            onChange={(next) => setTargetIndex(next === "auto" ? null : Number(next))}
+            ariaLabel="Note to tune"
+          />
         )}
         {selectedTarget ? (
           <p className="mt-2 text-[13px] text-muted">
