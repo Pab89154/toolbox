@@ -18,47 +18,20 @@ function CoinFace({ side }: { side: "heads" | "tails" }) {
       {side === "heads" ? (
         <QuarterHeads ink={ink} detail="var(--detail)" />
       ) : (
-        <g transform="translate(-5 -5)">
-          <circle cx="105" cy="105" r="74" fill="none" style={{ stroke: "var(--line)" }} strokeWidth="1.5" />
-          <defs>
-            <path id="tailsArc" d="M 34 108 A 71 71 0 0 1 176 108" fill="none" />
-            <path id="tailsArcB" d="M 40 96 A 69 69 0 0 0 170 96" fill="none" />
-          </defs>
-          <text fontFamily="Georgia, 'Times New Roman', serif" fontSize="10.5" letterSpacing="2" fill={ink}>
-            <textPath href="#tailsArc" startOffset="50%" textAnchor="middle">
-              UNITED STATES OF AMERICA
-            </textPath>
-          </text>
-          {/* Heraldic eagle: raised wings, shield, tail feathers */}
-          <g transform="translate(10.5 4.1) scale(0.9)">
-            <path
-              fill={ink}
-              d="M 101 90 C 86 68, 64 52, 38 48 C 44 58, 47 66, 46 73 C 51 76, 57 76, 60 79 C 55 85, 54 91, 57 97 C 62 98, 67 97, 70 100 C 68 108, 71 115, 78 119 C 88 110, 97 100, 101 90 Z"
+        <>
+          <clipPath id="tailsClip">
+            <circle cx="100" cy="100" r="83" />
+          </clipPath>
+          <g clipPath="url(#tailsClip)">
+            <image
+              href={`${import.meta.env.BASE_URL}coin-tails-${theme}.svg`}
+              x="13"
+              y="6.8"
+              width="176.3"
+              height="188.8"
             />
-            <path
-              fill={ink}
-              d="M 109 90 C 124 68, 146 52, 172 48 C 166 58, 163 66, 164 73 C 159 76, 153 76, 150 79 C 155 85, 156 91, 153 97 C 148 98, 143 97, 140 100 C 142 108, 139 115, 132 119 C 122 110, 113 100, 109 90 Z"
-            />
-            <path d="M 90 88 C 78 74, 64 64, 50 61 M 90 99 C 80 89, 68 82, 57 80" fill="none" style={{ stroke: "var(--detail)" }} strokeWidth="2.2" strokeLinecap="round" />
-            <path d="M 120 88 C 132 74, 146 64, 160 61 M 120 99 C 130 89, 142 82, 153 80" fill="none" style={{ stroke: "var(--detail)" }} strokeWidth="2.2" strokeLinecap="round" />
-            <path
-              fill={ink}
-              style={{ stroke: "var(--detail)" }}
-              strokeWidth="2"
-              d="M 110 50 C 102 46, 94 50, 91 57 L 80 64 C 78 66, 79 69, 82 69 L 90 70 C 89 74, 90 78, 93 80 L 90 85 L 97 85 L 96 91 L 103 87 C 108 84, 112 77, 112 67 C 112 60, 111 54, 110 50 Z"
-            />
-            <circle cx="98" cy="59" r="2.1" style={{ fill: "var(--detail)" }} />
-            <path fill={ink} d="M 88 90 L 122 90 L 122 112 C 122 125, 115 135, 105 141 C 95 135, 88 125, 88 112 Z" />
-            <path d="M 88 100 L 122 100" style={{ stroke: "var(--detail)" }} strokeWidth="3" />
-            <path d="M 97 102 L 97 128 M 105 102 L 105 134 M 113 102 L 113 128" style={{ stroke: "var(--detail)" }} strokeWidth="2.5" />
-            <path d="M 98 141 L 97 146 M 105 142 L 105 147 M 112 141 L 113 146" stroke={ink} strokeWidth="3.5" strokeLinecap="round" />
           </g>
-          <text fontFamily="Georgia, 'Times New Roman', serif" fontSize="9.5" letterSpacing="2" fill={ink}>
-            <textPath href="#tailsArcB" startOffset="50%" textAnchor="middle">
-              QUARTER DOLLAR
-            </textPath>
-          </text>
-        </g>
+        </>
       )}
     </svg>
   );
